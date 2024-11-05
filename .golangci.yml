@@ -1,13 +1,10 @@
 linters:
   enable:
     - errcheck       # Check for unchecked errors
-    - govet          # Run Go's vet tool
-    - staticcheck    # Static analysis for potential bugs
-    - gofmt          # Ensures proper formatting
-  disable:
-    - gocyclo        # Optional: Disable cyclomatic complexity check
+    - govet          # Check for issues in printf/println statements, etc.
+    - staticcheck    # Finds common bug patterns
+    - gofmt          # Enforces formatting standards
 
-run:
-  timeout: 5m
-  skip-files:
-    - .*_test.go
+issues:
+  exclude-files:
+    - .*_test.go   # Example to exclude test files from linting, if desired
