@@ -1,3 +1,7 @@
+## Debts : 
+    Secure Env file
+
+
 # Company Service
 
 A Go-based microservice for managing companies, supporting CRUD operations with authentication and optional event streaming.
