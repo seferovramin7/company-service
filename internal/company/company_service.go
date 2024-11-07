@@ -12,7 +12,6 @@ import (
 	"time"
 )
 
-// CompanyServiceImpl implements the CompanyServiceServer interface.
 type CompanyServiceImpl struct {
 	proto.UnimplementedCompanyServiceServer
 	AuthService   *auth.AuthService
@@ -20,7 +19,6 @@ type CompanyServiceImpl struct {
 	KafkaProducer kafka.Producer // Use the Producer interface for Kafka dependency injection
 }
 
-// NewCompanyServiceImpl creates a new CompanyServiceImpl instance with AuthService, DB, and KafkaProducer.
 func NewCompanyServiceImpl(authService *auth.AuthService, db *sql.DB, kafkaProducer kafka.Producer) *CompanyServiceImpl {
 	return &CompanyServiceImpl{
 		AuthService:   authService,
@@ -29,13 +27,11 @@ func NewCompanyServiceImpl(authService *auth.AuthService, db *sql.DB, kafkaProdu
 	}
 }
 
-// CompanyEvent represents the structure of an event message.
 type CompanyEvent struct {
 	EventType string         `json:"event_type"`
 	Company   *proto.Company `json:"company"`
 }
 
-// publishEvent sends a company event to Kafka.
 func (s *CompanyServiceImpl) publishEvent(ctx context.Context, eventType string, company *proto.Company) {
 	event := CompanyEvent{EventType: eventType, Company: company}
 	eventData, err := json.Marshal(event)
@@ -55,8 +51,7 @@ func (s *CompanyServiceImpl) publishEvent(ctx context.Context, eventType string,
 	}
 }
 
-// CreateCompany handles the creation of a new company.
-func (s *CompanyServiceImpl) CreateCompany(ctx context.Context, req *proto.CreateCompanyRequest) (*proto.CompanyID, error) {
+func (s *CompanyServiceImpl) CreateCompany(ctx context.Context, req *proto.CreateCompanyRequest) (*proto.CreateCompanyResponse, error) {
 	company := req.Company
 	query := `
 		INSERT INTO companies (name, description, employees, registered, type)
@@ -72,11 +67,10 @@ func (s *CompanyServiceImpl) CreateCompany(ctx context.Context, req *proto.Creat
 	company.Id = id
 	s.publishEvent(ctx, "CREATE", company)
 
-	return &proto.CompanyID{Id: id}, nil
+	return &proto.CreateCompanyResponse{Company: company}, nil
 }
 
-// UpdateCompany handles updating an existing company.
-func (s *CompanyServiceImpl) UpdateCompany(ctx context.Context, req *proto.UpdateCompanyRequest) (*proto.CompanyID, error) {
+func (s *CompanyServiceImpl) UpdateCompany(ctx context.Context, req *proto.UpdateCompanyRequest) (*proto.UpdateCompanyResponse, error) {
 	company := req.Company
 	query := `
 		UPDATE companies
@@ -95,10 +89,9 @@ func (s *CompanyServiceImpl) UpdateCompany(ctx context.Context, req *proto.Updat
 
 	s.publishEvent(ctx, "UPDATE", company)
 
-	return &proto.CompanyID{Id: company.Id}, nil
+	return &proto.UpdateCompanyResponse{Company: company}, nil
 }
 
-// DeleteCompany handles deleting a company.
 func (s *CompanyServiceImpl) DeleteCompany(ctx context.Context, req *proto.DeleteCompanyRequest) (*proto.CompanyID, error) {
 	query := "DELETE FROM companies WHERE id = $1"
 	_, err := s.DB.ExecContext(ctx, query, req.Id)
@@ -112,7 +105,6 @@ func (s *CompanyServiceImpl) DeleteCompany(ctx context.Context, req *proto.Delet
 	return &proto.CompanyID{Id: req.Id}, nil
 }
 
-// GetCompany retrieves a company by its ID.
 func (s *CompanyServiceImpl) GetCompany(ctx context.Context, req *proto.CompanyID) (*proto.GetCompanyResponse, error) {
 	var company proto.Company
 	query := "SELECT id, name, description, employees, registered, type FROM companies WHERE id = $1"
@@ -136,7 +128,6 @@ func (s *CompanyServiceImpl) GetCompany(ctx context.Context, req *proto.CompanyI
 	return &proto.GetCompanyResponse{Company: &company}, nil
 }
 
-// Login generates a JWT for a given user_id and returns it.
 func (s *CompanyServiceImpl) Login(ctx context.Context, req *proto.LoginRequest) (*proto.LoginResponse, error) {
 	token, err := s.AuthService.GenerateToken(req.UserId)
 	if err != nil {

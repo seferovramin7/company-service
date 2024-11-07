@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	// Load configuration to get the JWT secret
+
 	cfg, err := config.LoadConfig()
 	if err != nil {
 		log.Fatalf("Could not load config: %v", err)

@@ -13,12 +13,10 @@ type Config struct {
 	KafkaTopicCompanyEvents string
 }
 
-// LoadConfig loads environment variables using Viper
 func LoadConfig() (*Config, error) {
 	viper.SetConfigFile(".env") // Optional if you have an .env file
 	viper.AutomaticEnv()        // Automatically read environment variables
 
-	// Set default values if necessary
 	viper.SetDefault("JWT_SECRET", "mySecretKey")
 	viper.SetDefault("APP_PORT", "8080")
 	viper.SetDefault("KAFKA_BROKER", "localhost:9092")
@@ -29,7 +27,6 @@ func LoadConfig() (*Config, error) {
 		log.Printf("Config file not found, using environment variables instead")
 	}
 
-	// Extract the environment variables into a Config struct
 	config := &Config{
 		JWTSecret:               viper.GetString("JWT_SECRET"),
 		AppPort:                 viper.GetString("APP_PORT"),
@@ -38,7 +35,6 @@ func LoadConfig() (*Config, error) {
 		KafkaTopicCompanyEvents: viper.GetString("KAFKA_TOPIC_COMPANY_EVENTS"),
 	}
 
-	// Basic validation
 	if config.JWTSecret == "" {
 		log.Fatal("JWT_SECRET environment variable is not set")
 	}

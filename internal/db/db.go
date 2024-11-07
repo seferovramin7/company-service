@@ -27,7 +27,6 @@ func Connect() (*sql.DB, error) {
 	db.SetMaxOpenConns(10)
 	db.SetConnMaxLifetime(time.Hour)
 
-	// Test the connection
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("could not ping the database: %v", err)
 	}

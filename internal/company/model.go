@@ -11,7 +11,6 @@ type Company struct {
 	Type        string
 }
 
-// ToProto converts Company struct to protobuf Company message
 func (c *Company) ToProto() *proto.Company {
 	return &proto.Company{
 		Id:          c.ID,
@@ -23,7 +22,6 @@ func (c *Company) ToProto() *proto.Company {
 	}
 }
 
-// FromProto converts protobuf Company message to Company struct
 func FromProto(protoCompany *proto.Company) *Company {
 	return &Company{
 		ID:          protoCompany.Id,
