@@ -38,7 +38,8 @@ func TestCreateCompany(t *testing.T) {
 
 	// Assert
 	assert.NoError(t, err)
-	assert.Equal(t, int64(1), resp)
+	assert.NotNil(t, resp.Company)
+	assert.Equal(t, int64(1), resp.Company.Id)
 	assert.Len(t, kafkaProducer.PublishedMessages, 1)
 	assert.Contains(t, kafkaProducer.PublishedMessages[0], `"event_type":"CREATE"`)
 }
@@ -72,7 +73,8 @@ func TestUpdateCompany(t *testing.T) {
 
 	// Assert
 	assert.NoError(t, err)
-	assert.Equal(t, int64(1), resp)
+	assert.NotNil(t, resp.Company)
+	assert.Equal(t, int64(1), resp.Company.Id)
 	assert.Len(t, kafkaProducer.PublishedMessages, 1)
 	assert.Contains(t, kafkaProducer.PublishedMessages[0], `"event_type":"UPDATE"`)
 }
@@ -85,7 +87,7 @@ func TestDeleteCompany(t *testing.T) {
 	authService := auth.NewAuthService("test-secret")
 
 	// Expecting a DELETE statement
-	mock.ExpectExec("DELETE FROM companies WHERE id = ?").
+	mock.ExpectExec("DELETE FROM companies WHERE id = \\$1").
 		WithArgs(int64(1)).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
@@ -110,7 +112,7 @@ func TestGetCompany(t *testing.T) {
 	authService := auth.NewAuthService("test-secret")
 
 	// Expecting a SELECT statement
-	mock.ExpectQuery("SELECT id, name, description, employees, registered, type FROM companies").
+	mock.ExpectQuery("SELECT id, name, description, employees, registered, type FROM companies WHERE id = \\$1").
 		WithArgs(int64(1)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "description", "employees", "registered", "type"}).
 			AddRow(1, "Test Co", "A sample company", 50, true, "Corporation"))
