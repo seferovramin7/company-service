@@ -29,14 +29,11 @@ const (
 // CompanyServiceClient is the client API for CompanyService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// gRPC service for managing companies and authentication
 type CompanyServiceClient interface {
-	CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CompanyID, error)
-	UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*CompanyID, error)
+	CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CreateCompanyResponse, error)
+	UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error)
 	DeleteCompany(ctx context.Context, in *DeleteCompanyRequest, opts ...grpc.CallOption) (*CompanyID, error)
 	GetCompany(ctx context.Context, in *CompanyID, opts ...grpc.CallOption) (*GetCompanyResponse, error)
-	// New method for user login to get a JWT
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 }
 
@@ -48,9 +45,9 @@ func NewCompanyServiceClient(cc grpc.ClientConnInterface) CompanyServiceClient {
 	return &companyServiceClient{cc}
 }
 
-func (c *companyServiceClient) CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CompanyID, error) {
+func (c *companyServiceClient) CreateCompany(ctx context.Context, in *CreateCompanyRequest, opts ...grpc.CallOption) (*CreateCompanyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CompanyID)
+	out := new(CreateCompanyResponse)
 	err := c.cc.Invoke(ctx, CompanyService_CreateCompany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -58,9 +55,9 @@ func (c *companyServiceClient) CreateCompany(ctx context.Context, in *CreateComp
 	return out, nil
 }
 
-func (c *companyServiceClient) UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*CompanyID, error) {
+func (c *companyServiceClient) UpdateCompany(ctx context.Context, in *UpdateCompanyRequest, opts ...grpc.CallOption) (*UpdateCompanyResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CompanyID)
+	out := new(UpdateCompanyResponse)
 	err := c.cc.Invoke(ctx, CompanyService_UpdateCompany_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -101,14 +98,11 @@ func (c *companyServiceClient) Login(ctx context.Context, in *LoginRequest, opts
 // CompanyServiceServer is the server API for CompanyService service.
 // All implementations must embed UnimplementedCompanyServiceServer
 // for forward compatibility.
-//
-// gRPC service for managing companies and authentication
 type CompanyServiceServer interface {
-	CreateCompany(context.Context, *CreateCompanyRequest) (*CompanyID, error)
-	UpdateCompany(context.Context, *UpdateCompanyRequest) (*CompanyID, error)
+	CreateCompany(context.Context, *CreateCompanyRequest) (*CreateCompanyResponse, error)
+	UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error)
 	DeleteCompany(context.Context, *DeleteCompanyRequest) (*CompanyID, error)
 	GetCompany(context.Context, *CompanyID) (*GetCompanyResponse, error)
-	// New method for user login to get a JWT
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	mustEmbedUnimplementedCompanyServiceServer()
 }
@@ -120,10 +114,10 @@ type CompanyServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCompanyServiceServer struct{}
 
-func (UnimplementedCompanyServiceServer) CreateCompany(context.Context, *CreateCompanyRequest) (*CompanyID, error) {
+func (UnimplementedCompanyServiceServer) CreateCompany(context.Context, *CreateCompanyRequest) (*CreateCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCompany not implemented")
 }
-func (UnimplementedCompanyServiceServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*CompanyID, error) {
+func (UnimplementedCompanyServiceServer) UpdateCompany(context.Context, *UpdateCompanyRequest) (*UpdateCompanyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCompany not implemented")
 }
 func (UnimplementedCompanyServiceServer) DeleteCompany(context.Context, *DeleteCompanyRequest) (*CompanyID, error) {
