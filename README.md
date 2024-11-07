@@ -1,6 +1,6 @@
 
 
-# **Company Service Documentation**
+# **Company Service**
 
 ## **1. Overview**
 
@@ -201,7 +201,7 @@ jobs:
 ## **8. Notes**
 
 ### **Managing Secrets**
-For demonstration purposes, `.env` is included in this repository. In production, always use a secure solution like:
+For demonstration purposes, `.env` is included in this repository. In production, i would use solution like:
 - **GitHub Actions Secrets**
 - **AWS Secrets Manager**
 - **Vault**

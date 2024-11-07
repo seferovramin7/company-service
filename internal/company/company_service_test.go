@@ -38,7 +38,7 @@ func TestCreateCompany(t *testing.T) {
 
 	// Assert
 	assert.NoError(t, err)
-	assert.Equal(t, int64(1), resp.Id)
+	assert.Equal(t, int64(1), resp)
 	assert.Len(t, kafkaProducer.PublishedMessages, 1)
 	assert.Contains(t, kafkaProducer.PublishedMessages[0], `"event_type":"CREATE"`)
 }
@@ -72,7 +72,7 @@ func TestUpdateCompany(t *testing.T) {
 
 	// Assert
 	assert.NoError(t, err)
-	assert.Equal(t, int64(1), resp.Id)
+	assert.Equal(t, int64(1), resp)
 	assert.Len(t, kafkaProducer.PublishedMessages, 1)
 	assert.Contains(t, kafkaProducer.PublishedMessages[0], `"event_type":"UPDATE"`)
 }
