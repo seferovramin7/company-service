@@ -55,7 +55,7 @@ grpcurl -plaintext -d '{"user_id": 1}' 167.99.133.239:8080 company.CompanyServic
     167.99.133.239:8080 company.CompanyService/DeleteCompany
   ```
 
-### **3. Verifying Kafka Events**
+### **3. Verifying Kafka Events (only available on local building option)**
 
 Check logs for successful Kafka message publications:
 ```bash
