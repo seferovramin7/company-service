@@ -1,6 +1,68 @@
-
-
 # **Company Service**
+
+## **Server Testing**
+
+The application is deployed and available for testing on a live server. Below are the steps to interact with the service:
+
+### **Server Address**: `167.99.133.239`
+
+### **Installing grpcurl ( if not exist )**
+
+- **macOS**: `brew install grpcurl`
+- **Windows**: Use [releases](https://github.com/fullstorydev/grpcurl/releases) or `choco install grpcurl`
+- **Linux**: `brew install grpcurl` or download from [releases](https://github.com/fullstorydev/grpcurl/releases) and move to PATH.
+
+
+
+### **1. Authentication**
+
+Generate a JWT token:
+```bash
+grpcurl -plaintext -d '{"user_id": 1}' 167.99.133.239:8080 company.CompanyService/Login
+```
+
+### **2. CRUD Operations**
+
+- **Create a Company**:
+  ```bash
+  grpcurl -plaintext \
+    -H "Authorization: Bearer <TOKEN>" \
+    -d '{"company": {"name": "Test Co", "description": "A sample company", "employees": 50, "registered": true, "type": "Corporation"}}' \
+    167.99.133.239:8080 company.CompanyService/CreateCompany
+  ```
+
+- **Get a Company**:
+  ```bash
+  grpcurl -plaintext \
+    -H "Authorization: Bearer <TOKEN>" \
+    -d '{"id": 1}' \
+    167.99.133.239:8080 company.CompanyService/GetCompany
+  ```
+
+- **Update a Company**:
+  ```bash
+  grpcurl -plaintext \
+    -H "Authorization: Bearer <TOKEN>" \
+    -d '{"company": {"id": 1, "name": "Updated Co", "description": "Updated description", "employees": 100, "registered": false, "type": "LLC"}}' \
+    167.99.133.239:8080 company.CompanyService/UpdateCompany
+  ```
+
+- **Delete a Company**:
+  ```bash
+  grpcurl -plaintext \
+    -H "Authorization: Bearer <TOKEN>" \
+    -d '{"id": 1}' \
+    167.99.133.239:8080 company.CompanyService/DeleteCompany
+  ```
+
+### **3. Verifying Kafka Events**
+
+Check logs for successful Kafka message publications:
+```bash
+Successfully published message to Kafka - Key: <ID>, Message: <EventPayload>
+```
+
+---
 
 ## **1. Overview**
 
@@ -10,14 +72,14 @@ This project implements a gRPC-based `company-service` microservice. It provides
 
 ## **2. Features**
 
-Non Functional : 
+### **Non-Functional**:
 - **gRPC-based microservice** for managing company entities.
 - **JWT authentication** to secure gRPC endpoints.
 - **Kafka integration** for event-driven architecture.
 - **PostgreSQL database** for persistent storage.
-- **GitHub Actions CI/CD pipeline** for automated testing and deployment.\
+- **GitHub Actions CI/CD pipeline** for automated testing and deployment.
 
-Functional :
+### **Functional**:
 - **CRUD Operations**: Supports create, read, update, and delete actions for company records.
 - **Authentication**: JWT-based authentication to secure endpoints.
 - **Event Streaming**: Kafka-based event handling on data mutations (create, update, delete) (optional).
@@ -36,7 +98,7 @@ Functional :
 
 ---
 
-## Project Structure
+## **4. Project Structure**
 
 ```plaintext
 company-service/
@@ -45,34 +107,31 @@ company-service/
 ├── internal/               # Core application code and business logic
 │   ├── company/            # Company CRUD logic and repository
 │   ├── auth/               # Authentication logic
-│   ├── events/             # Kafka event producer
+│   ├── kafka/              # Kafka producer logic
 │   └── db/                 # Database access and repository patterns
-├── api/                    # API handlers and routes
-│   └── v1/                 # API versioning folder
 ├── configs/                # Configuration files
-│   ├── config.yaml         # Default YAML configuration
 │   └── config.go           # Configuration loader
-├── scripts/                # Utility scripts
-│   └── setup_db.sh         # Script for setting up the database (if needed)
 ├── tests/                  # Integration and mock tests
-│   ├── integration/        # Integration tests for database, API, etc.
-│   └── mock/               # Mock objects and utilities for unit tests
+├── db/migrations/          # Migration files for database setup
 ├── docker/                 # Docker-related files
 │   ├── Dockerfile          # Dockerfile for building the app image
-│   ├── docker-compose.yml  # Docker Compose for app and dependencies
-│   └── kafka/              # Kafka-specific Docker setup
-└── .github/                # GitHub configurations and issue templates
+│   └── docker-compose.yml  # Docker Compose for app and dependencies
+└── .github/                # GitHub configurations and CI/CD workflows
 ```
 
+---
 
-## **4. Setup Instructions**
+## **5. Setup Instructions**
 
 ### **4.1 Clone the Repository**
 ```bash
 git clone https://github.com/seferovramin7/company-service.git
 cd company-service
+```
 
-Start all services using Docker Compose:
+### **4.2 Start Services with Docker Compose**
+Run the following command to start all services:
+```bash
 docker-compose up --build
 ```
 
@@ -201,10 +260,8 @@ jobs:
 ## **8. Notes**
 
 ### **Managing Secrets**
-For demonstration purposes, `.env` is included in this repository. In production, i would use solution like:
+For demonstration purposes, `.env` is included in this repository. In production, i would use solutions like:
 - **GitHub Actions Secrets**
 - **AWS Secrets Manager**
 - **Vault**
-
----
 ```
